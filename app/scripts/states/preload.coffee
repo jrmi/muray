@@ -6,17 +6,13 @@ class Preload
     loadingBar.anchor.setTo 0.5, 0.5
     @load.setPreloadSprite loadingBar
 
-    @game.load.image 'starBackground','assets/backgrounds/starfield.jpg', 138, 15
     @game.load.image 'background','assets/backgrounds/back.jpg', 138, 15
-    @game.load.image 'logo', 'assets/sprites/phaser2.png'
     @game.load.image 'canon', 'assets/sprites/cannon0001.png'
-    @game.load.image 'castle', 'assets/sprites/castle.png'
     @game.load.image 'crosshair', 'assets/sprites/crosshair.png'
     @game.load.image 'house', 'assets/sprites/house.png'
     @game.load.image 'shot', 'assets/sprites/shot.png'
     @game.load.image 'tank', 'assets/sprites/tank1.png'
     @game.load.image 'wall', 'assets/sprites/wall.png'
-    @game.load.image 'garbage', 'assets/sprites/garbage.png'
     @game.load.image 'cantbuild', 'assets/sprites/cantbuild.png'
 
     @game.load.image 'tileset', 'assets/tilemaps/tilemap.png'

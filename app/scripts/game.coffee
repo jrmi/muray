@@ -70,7 +70,6 @@ window.onload = ->
     console.log('Wamp connection established')
     game = new Game()
 
-
     # Handle first or second player
     if uuid
       game.currentPlayer = 1
@@ -87,7 +86,6 @@ window.onload = ->
     if game.currentPlayer == 0
       session.subscribe game.prefix + 'player2', (args) ->
         console.log('player2 is there ', args)
-        console.log(game.state.getCurrentState())
         game.state.getCurrentState().incomingPlayer2(args)
 
     game.session.subscribe game.prefix + 'turnEnded', (args) ->
@@ -109,7 +107,6 @@ window.onload = ->
       console.log "Build received", args
       if game.state.getCurrentState().onBuild?
         game.state.getCurrentState().onBuild(args)
-
 
     console.log('Connection opened')
 

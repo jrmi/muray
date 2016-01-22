@@ -33,7 +33,6 @@ class Fire
         @game.text.setText('Cease fire !')
         @cleanState()
         # wait for all shot to finish
-        console.log(@fireing)
         if @fireing > 0
           return
 
