@@ -30,6 +30,7 @@ class Fire
         @counter--
         @game.text.setText('' + @counter)
       else
+        @game.text.setText('Cease fire !')
         @cleanState()
         # wait for all shot to finish
         console.log(@fireing)
@@ -52,7 +53,6 @@ class Fire
     @game.state.start 'repair', false
 
   cleanState: ()->
-
     @marker.destroy()
 
   update : ->

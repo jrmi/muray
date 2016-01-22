@@ -1,7 +1,6 @@
 class Start
 
   create : ->
-    console.log('player: ', @game.currentPlayer)
     @game.stage.disableVisibilityChange = true
 
     @game.background = @game.add.sprite 0, 0, 'background'
@@ -29,6 +28,8 @@ class Start
 
     @game.text = @game.add.text(@game.world.centerX, @game.world.centerY, '0', { font: "64px Arial", fill: "#ffffff", align: "center" })
     @game.text.anchor.setTo(0.5, 0.5)
+
+    @game.text.setText('Waiting for other player...')
 
     @game.fx = @game.add.audio('sfx')
     @game.fire = @game.add.audio('fire')

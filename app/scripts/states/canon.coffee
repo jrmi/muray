@@ -40,7 +40,7 @@ class Canon
     @game.state.start 'fire', false
 
   cleanState: ()->
-    @game.text.setText('waiting')
+    @game.text.setText('Prepare to battle...')
 
     for c in @cantbuilds
       c.destroy()

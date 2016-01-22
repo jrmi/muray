@@ -53,7 +53,7 @@ class Repair
     @game.state.start 'canon', false
 
   cleanState: ()->
-    @game.text.setText('waiting')
+    @game.text.setText('Waiting...')
     @marker.destroy()
     for c in @cantbuilds
       c.destroy()
@@ -126,22 +126,24 @@ class Repair
 
 
   inputCallback: ()->
-    if @game.input.activePointer.leftButton.isDown
+    if @game.input.activePointer.rightButton.isDown
       if @checkOverlap()
+
         blockList = []
         @marker.forEach (item) ->
           blockList.push({x:Math.round(item.world.x), y: Math.round(item.world.y)})
         , this
+
         @build(blockList, @game.currentPlayer)
-        #@marker.forEach (item) ->
-        #  @game.map1x1.putTileWorldXY(@game.TILES.wall[@game.currentPlayer], Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
-        #, this
+
         @game.fx.play()
-        @checkTerritory(@game.currentPlayer)
-        @updateMarker()
+
         @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
 
-    if @game.input.activePointer.rightButton.isDown
+        @checkTerritory(@game.currentPlayer)
+        @updateMarker()
+
+    if @game.input.activePointer.leftButton.isDown
       @marker.rotation += Math.PI / 2
 
   onBuild: (args)->
