@@ -1,8 +1,9 @@
 {
-  "name": "mmorampart",
+  "name": "muray",
   "version": "0.0.0",
   "dependencies": {
-    "phaser-official": "^2.4.2"
+    "phaser-official": "^2.4.2",
+    "autobahn": "^0.9.9"
   }
 }
 

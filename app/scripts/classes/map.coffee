@@ -2,10 +2,13 @@ Map = {
 
   TILES: {
     wall: 1
-    garbage: 11
-    house: 6
-    castle: [2, 3, 7, 8]
-    canon: [4, 5, 9, 10]
+    walls:[1, 2]
+    secured:[9, 10]
+    garbage: 25
+    house: 18
+    tank: 17
+    castle: [3, 4,11, 12]
+    canon: [19, 20, 27, 28]
   }
 
   cantbuilds: []
@@ -42,10 +45,10 @@ Map = {
     p = new Phaser.Point()
     @layer1.getTileXY(x,y, p)
 
-    @map1x1.putTile(@TILES.canon[0], p.x, p.y)
-    @map1x1.putTile(@TILES.canon[1], p.x + 1, p.y)
-    @map1x1.putTile(@TILES.canon[2], p.x, p.y + 1)
-    @map1x1.putTile(@TILES.canon[3], p.x + 1, p.y + 1)
+    @map1x1.putTile(@TILES.canon[0], p.x, p.y, 'objects')
+    @map1x1.putTile(@TILES.canon[1], p.x + 1, p.y, 'objects')
+    @map1x1.putTile(@TILES.canon[2], p.x, p.y + 1, 'objects')
+    @map1x1.putTile(@TILES.canon[3], p.x + 1, p.y + 1, 'objects')
 
     p = @XYTileToWorld(p, @map1x1)
 
@@ -63,7 +66,8 @@ Map = {
 
     for xx in [p.x, p.x + 1]
       for yy in [p.y, p.y + 1]
-        if @map1x1.getTile(xx, yy) or !@map1x1.getTile(xx,yy,'ground')?
+        secure = @map1x1.getTile(xx, yy, 'secured')
+        if @map1x1.getTile(xx, yy, 'objects') or !(secure? and secure.index == @TILES.secured[@game.currentPlayer])
           canbuild = false
           c = @map1x1.game.add.sprite  xx * 20, yy * 20, 'cantbuild'
           c.alpha = 0.5

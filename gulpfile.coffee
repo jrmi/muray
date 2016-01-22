@@ -20,6 +20,7 @@ paths =
   buildStyles  : 'build/styles'
   buildAssets  : 'build/assets'
   buildScripts : 'build/scripts'
+  ghDir     : 'gh-pages'
 
 
 gulp.task 'clean', (cb) ->
@@ -107,6 +108,12 @@ gulp.task 'build', ['coffeeify', 'copyHtml', 'copyStyles', 'copyAssets', 'watchC
       title : 'build'
       gzip  : on
 
+
+gulp.task 'makeGH',['build'],  ->
+
+  gulp
+    .src "#{paths.buildDir}/**/*"
+    .pipe gulp.dest paths.ghDir
 
 gulp.task 'default', ['clean'], ->
 

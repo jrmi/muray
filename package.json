@@ -1,5 +1,5 @@
 {
-  "name": "mmorampart",
+  "name": "muray",
   "version": "0.0.0",
   "description": "",
   "repository": "",
@@ -11,10 +11,12 @@
     ]
   },
   "browser": {
-    "phaser": "./app/lib/phaser-official/build/phaser.min.js"
+    "phaser": "./app/lib/phaser-official/build/phaser.min.js",
+    "autobahn": "./app/lib/autobahn/autobahn.min.js"
   },
   "browserify-shim": {
-    "phaser": "Phaser"
+    "phaser": "Phaser",
+    "autobahn": "autobahn"
   },
   "dependencies": {
   },

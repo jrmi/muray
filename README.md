@@ -1,2 +1,3 @@
 # muray
-Online clone of rampart and castle-combat a game for two player
+
+Online clone of rampart and castle-combat a two player game

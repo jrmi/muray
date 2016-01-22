@@ -4,16 +4,15 @@ class Repair
     [[0,0], [1,0], [-1,0]],
     [[0,0], [1,0]],
     [[0,0], [1,0], [-1,0], [1,1]],
+    [[0,0], [1,0], [-1,0], [-1,-1]],
     [[0,0], [1,0], [-1,0], [0,1]],
     [[0,0], [1,0], [0,1]],
     [[0,0], [0,-1], [0,1], [1,-1],[1,1]],
   ]
 
   create : ->
-
+    @game.stage.disableVisibilityChange = true
     @cantbuilds = []
-    @counter = 10
-    @game.me.text.setText('' + @counter)
 
 
     @game.time.events.loop(Phaser.Timer.SECOND, () ->
@@ -21,7 +20,44 @@ class Repair
     , this)
 
     @updateMarker()
-    @checkTerritory()
+    @checkTerritory(@game.currentPlayer)
+    @checkTerritory(@game.otherPlayer)
+
+    @turnEnded = false
+    @otherEnded = false
+
+    @counter = 10
+    @game.me.text.setText('' + @counter)
+
+
+  counterCallback : () ->
+    if !@turnEnded
+      if @counter > 0
+        @counter--
+        @game.me.text.setText('' + @counter)
+      else
+        @cleanState()
+        @game.session.publish @game.prefix + 'turnEnded', ['repair', @game.currentPlayer]
+        if !@otherEnded
+          @turnEnded = true
+        else
+          @nextState()
+
+  onTurnEnded: (args) ->
+    if @turnEnded
+      @nextState()
+    else
+      @otherEnded = true
+
+  nextState: ()->
+    @game.state.start 'canon', false
+
+  cleanState: ()->
+    @game.me.text.setText('waiting')
+    @marker.destroy()
+    for c in @cantbuilds
+      c.destroy()
+
 
   updateMarker: ()->
     if @marker?
@@ -37,19 +73,11 @@ class Repair
     @marker.alpha = 0.4
 
   update : ->
-    p = @game.me.XYWorldToTiledWorld(@game.input, @game.me.layer1)
-    @marker.x = p.x + 10
-    @marker.y = p.y + 10
-    @checkOverlap()
-
-  counterCallback : () ->
-    @counter--
-    @game.me.text.setText('' + @counter)
-    if @counter <= 0
-      @marker.destroy()
-      for c in @cantbuilds
-        c.destroy()
-      @game.state.start 'canon', false
+    if !@turnEnded
+      p = @game.me.XYWorldToTiledWorld(@game.input, @game.me.layer1)
+      @marker.x = p.x + 10
+      @marker.y = p.y + 10
+      @checkOverlap()
 
 
   floodFill: (map, x, y, source, dest) ->
@@ -63,7 +91,8 @@ class Repair
         if i >= 0 and i <= 41 and j >=0 and j <= 31
           @floodFill(map, i, j, source, dest)
 
-  checkTerritory: () ->
+
+  checkTerritory: (player) ->
     table = []
     for x in [0..43]
       line = []
@@ -74,9 +103,9 @@ class Repair
           if x == 1 || x == 42 || y == 1 || y == 32
             res = 0
           else
-            tile = @game.me.map1x1.getTile(x - 2, y - 2)
+            tile = @game.me.map1x1.getTile(x - 2, y - 2, 'objects')
             res = 0
-            if tile? and tile.index == 1
+            if tile? and tile.index == @game.me.TILES.walls[player]
               res = 1
         line.push(res)
       table.push(line)
@@ -87,21 +116,23 @@ class Repair
       for y in [0..30]
 
         if table[x + 2][y + 2] == 0
-          t = @game.me.TILES.garbage
+          t = @game.me.TILES.secured[player]
         else
           t = null
 
-        @game.me.map1x1.putTile(t, x, y, 'ground')
+        cur = @game.me.map1x1.getTile(x, y, 'secured')
+        if !cur? or cur.index == @game.me.TILES.secured[player]
+          @game.me.map1x1.putTile(t, x, y, 'secured')
 
 
   inputCallback: ()->
     if @game.input.activePointer.leftButton.isDown
       if @checkOverlap()
         @marker.forEach (item) ->
-          @game.me.map1x1.putTileWorldXY(@game.me.TILES.wall, Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'walls')
+          @game.me.map1x1.putTileWorldXY(@game.me.TILES.wall, Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
         , this
         @game.me.fx.play()
-        @checkTerritory()
+        @checkTerritory(@game.currentPlayer)
         @updateMarker()
 
     if @game.input.activePointer.rightButton.isDown
@@ -125,7 +156,5 @@ class Repair
     , this
 
     return canbuild
-
-
 
 module.exports = Repair
