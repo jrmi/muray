@@ -2,7 +2,7 @@ class Fire
 
   create : ->
     @game.stage.disableVisibilityChange = true
-    @marker = @game.add.sprite @game.me.layer1.getTileX(@game.input.x), @game.me.layer1.getTileX(@game.input.y), 'crosshair'
+    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'crosshair'
 
     @currentCanon = 0
 
@@ -11,9 +11,9 @@ class Fire
     , this)
 
     @myCanons = []
-    for c in @game.me.canons
-      secure = @game.me.map1x1.getTile(c.mapCoord.x, c.mapCoord.y, 'secured')
-      if secure? and secure.index == @game.me.TILES.secured[@game.currentPlayer]
+    for c in @game.canons
+      secure = @game.map1x1.getTile(c.mapCoord.x, c.mapCoord.y, 'secured')
+      if secure? and secure.index == @game.TILES.secured[@game.currentPlayer]
         @myCanons.push(c)
 
     @turnEnded = false
@@ -22,22 +22,19 @@ class Fire
     @fireing = 0
 
     @counter = 5
-    @game.me.text.setText('' + @counter)
+    @game.text.setText('' + @counter)
 
   counterCallback : () ->
     if !@turnEnded
       if @counter > 0
         @counter--
-        @game.me.text.setText('' + @counter)
+        @game.text.setText('' + @counter)
       else
         @cleanState()
         # wait for all shot to finish
         console.log(@fireing)
         if @fireing > 0
           return
-        #for c in @game.me.canons
-        #  if c.busy
-        #    return
 
         @game.session.publish @game.prefix + 'turnEnded', ['fire', @game.currentPlayer]
         if !@otherEnded
@@ -74,7 +71,7 @@ class Fire
         @currentCanon++
         if @currentCanon >= @myCanons.length
           @currentCanon = 0
-        @game.me.fire.play()
+        @game.fire.play()
 
         @fire canon, {x: @game.input.x, y: @game.input.y}, ->
           canon.busy = false
@@ -100,9 +97,9 @@ class Fire
     scaled.to({ x: 1 + distance / 200, y: 1 + distance / 200 }, time / 2, Phaser.Easing.Cubic.In)
 
     shotted.onComplete.add () ->
-      tile = @game.me.map1x1.getTileWorldXY(dest.x, dest.y, 20, 20, 'objects')
-      if tile? and tile.index in @game.me.TILES.walls
-        @game.me.map1x1.putTileWorldXY(@game.me.TILES.garbage, dest.x, dest.y, 20, 20, 'objects')
+      tile = @game.map1x1.getTileWorldXY(dest.x, dest.y, 20, 20, 'objects')
+      if tile? and tile.index in @game.TILES.walls
+        @game.map1x1.putTileWorldXY(@game.TILES.garbage, dest.x, dest.y, 20, 20, 'objects')
       shot.destroy()
       @fireing--
       endCallback()

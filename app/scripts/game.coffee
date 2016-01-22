@@ -1,6 +1,5 @@
 Phaser  = require 'phaser'
 Autobahn  = require 'autobahn'
-Map = require './classes/map'
 Boot    = require './states/boot'
 Preload = require './states/preload'
 Menu    = require './states/menu'
@@ -13,12 +12,23 @@ Repair    = require './states/repair'
 
 class Game extends Phaser.Game
 
+  TILES: {
+    wall: 1
+    walls:[1, 2]
+    secured:[9, 10]
+    garbage: 25
+    house: 18
+    tank: 17
+    castle: [3, 4,11, 12]
+    canon: [19, 20, 27, 28]
+  }
+
+  canons : []
+
   constructor : ->
 
     super 800, 600, Phaser.AUTO, 'game-content'
 
-    @me = Map
-    @me.game = this
     @state.add 'boot', Boot
     @state.add 'preload', Preload
     @state.add 'menu', Menu
@@ -30,6 +40,22 @@ class Game extends Phaser.Game
 
     @state.start 'boot'
 
+
+  XYTileToWorld2: (p, map)->
+    p.x = p.x * map.tileWidth + Math.round(map.tileWidth / 2)
+    p.y = p.y * map.tileWidth + Math.round(map.tileHeight / 2)
+    return p
+
+  XYTileToWorld: (p, map)->
+    p.x = p.x * map.tileWidth
+    p.y = p.y * map.tileWidth
+    return p
+
+  XYWorldToTiledWorld: (point, layer)->
+    p = new Phaser.Point()
+    layer.getTileXY(point.x, point.y, p)
+    @XYTileToWorld(p, layer.map)
+    return  p
 
 window.onload = ->
 
@@ -83,21 +109,6 @@ window.onload = ->
       console.log "Build received", args
       if game.state.getCurrentState().onBuild?
         game.state.getCurrentState().onBuild(args)
-
-    # Subscribe
-    #session.subscribe('com.myapp.hello', onevent);
-
-    # Publish
-    #session.publish('com.myapp.hello', ['Hello, world!'])
-
-    add2 = (args) ->
-      return args[0] + args[1]
-
-    #session.register('com.myapp.add2', add2);
-
-    # Call
-    #session.call('com.myapp.add2', [2, 3]).then (res) ->
-    #     console.log("Result:", res)
 
 
     console.log('Connection opened')

@@ -27,14 +27,14 @@ class Repair
     @otherEnded = false
 
     @counter = 10
-    @game.me.text.setText('' + @counter)
+    @game.text.setText('' + @counter)
 
 
   counterCallback : () ->
     if !@turnEnded
       if @counter > 0
         @counter--
-        @game.me.text.setText('' + @counter)
+        @game.text.setText('' + @counter)
       else
         @cleanState()
         @game.session.publish @game.prefix + 'turnEnded', ['repair', @game.currentPlayer]
@@ -53,7 +53,7 @@ class Repair
     @game.state.start 'canon', false
 
   cleanState: ()->
-    @game.me.text.setText('waiting')
+    @game.text.setText('waiting')
     @marker.destroy()
     for c in @cantbuilds
       c.destroy()
@@ -63,7 +63,7 @@ class Repair
     if @marker?
       @marker.destroy()
 
-    @marker = @game.add.group(@game.me.layer1.getTileX(@game.input.x), @game.me.layer1.getTileX(@game.input.y), 'construct')
+    @marker = @game.add.group(@game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'construct')
 
     shape = shapes[Math.floor(Math.random()*shapes.length)]
     for block in shape
@@ -74,7 +74,7 @@ class Repair
 
   update : ->
     if !@turnEnded
-      p = @game.me.XYWorldToTiledWorld(@game.input, @game.me.layer1)
+      p = @game.XYWorldToTiledWorld(@game.input, @game.layer1)
       @marker.x = p.x + 10
       @marker.y = p.y + 10
       @checkOverlap()
@@ -103,9 +103,9 @@ class Repair
           if x == 1 || x == 42 || y == 1 || y == 32
             res = 0
           else
-            tile = @game.me.map1x1.getTile(x - 2, y - 2, 'objects')
+            tile = @game.map1x1.getTile(x - 2, y - 2, 'objects')
             res = 0
-            if tile? and tile.index == @game.me.TILES.walls[player]
+            if tile? and tile.index == @game.TILES.walls[player]
               res = 1
         line.push(res)
       table.push(line)
@@ -116,13 +116,13 @@ class Repair
       for y in [0..30]
 
         if table[x + 2][y + 2] == 0
-          t = @game.me.TILES.secured[player]
+          t = @game.TILES.secured[player]
         else
           t = null
 
-        cur = @game.me.map1x1.getTile(x, y, 'secured')
-        if !cur? or cur.index == @game.me.TILES.secured[player]
-          @game.me.map1x1.putTile(t, x, y, 'secured')
+        cur = @game.map1x1.getTile(x, y, 'secured')
+        if !cur? or cur.index == @game.TILES.secured[player]
+          @game.map1x1.putTile(t, x, y, 'secured')
 
 
   inputCallback: ()->
@@ -134,9 +134,9 @@ class Repair
         , this
         @build(blockList, @game.currentPlayer)
         #@marker.forEach (item) ->
-        #  @game.me.map1x1.putTileWorldXY(@game.me.TILES.wall[@game.currentPlayer], Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
+        #  @game.map1x1.putTileWorldXY(@game.TILES.wall[@game.currentPlayer], Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
         #, this
-        @game.me.fx.play()
+        @game.fx.play()
         @checkTerritory(@game.currentPlayer)
         @updateMarker()
         @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
@@ -153,7 +153,7 @@ class Repair
 
   build: (blockList, player) ->
     for block in blockList
-      @game.me.map1x1.putTileWorldXY(@game.me.TILES.walls[player], block.x, block.y, 20, 20, 'objects')
+      @game.map1x1.putTileWorldXY(@game.TILES.walls[player], block.x, block.y, 20, 20, 'objects')
 
   checkOverlap: ()->
     canbuild = true
@@ -163,10 +163,10 @@ class Repair
     @marker.forEach (item) ->
       x = Math.round(item.world.x)
       y = Math.round(item.world.y)
-      tile = @game.me.map1x1.getTileWorldXY(x, y)
-      if tile and tile.index not in [@game.me.TILES.garbage, @game.me.TILES.house]
+      tile = @game.map1x1.getTileWorldXY(x, y)
+      if tile and tile.index not in [@game.TILES.garbage, @game.TILES.house]
         canbuild = false
-        c = @game.me.map1x1.game.add.sprite  x, y, 'cantbuild'
+        c = @game.map1x1.game.add.sprite  x, y, 'cantbuild'
         c.alpha = 0.5
         c.anchor.setTo 0.5, 0.5
         @cantbuilds.push(c)
