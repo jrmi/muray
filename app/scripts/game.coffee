@@ -69,6 +69,21 @@ window.onload = ->
       if game.state.getCurrentState().onTurnEnded?
         game.state.getCurrentState().onTurnEnded(args)
 
+    game.session.subscribe game.prefix + 'addCanon', (args) ->
+      console.log "Add canon received", args
+      if game.state.getCurrentState().onAddCanon?
+        game.state.getCurrentState().onAddCanon(args)
+
+    game.session.subscribe game.prefix + 'fire', (args) ->
+      console.log "Fire received", args
+      if game.state.getCurrentState().onFire?
+        game.state.getCurrentState().onFire(args)
+
+    game.session.subscribe game.prefix + 'build', (args) ->
+      console.log "Build received", args
+      if game.state.getCurrentState().onBuild?
+        game.state.getCurrentState().onBuild(args)
+
     # Subscribe
     #session.subscribe('com.myapp.hello', onevent);
 

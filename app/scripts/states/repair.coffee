@@ -128,15 +128,32 @@ class Repair
   inputCallback: ()->
     if @game.input.activePointer.leftButton.isDown
       if @checkOverlap()
+        blockList = []
         @marker.forEach (item) ->
-          @game.me.map1x1.putTileWorldXY(@game.me.TILES.wall, Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
+          blockList.push({x:Math.round(item.world.x), y: Math.round(item.world.y)})
         , this
+        @build(blockList, @game.currentPlayer)
+        #@marker.forEach (item) ->
+        #  @game.me.map1x1.putTileWorldXY(@game.me.TILES.wall[@game.currentPlayer], Math.round(item.world.x), Math.round(item.world.y), 20, 20, 'objects')
+        #, this
         @game.me.fx.play()
         @checkTerritory(@game.currentPlayer)
         @updateMarker()
+        @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
 
     if @game.input.activePointer.rightButton.isDown
       @marker.rotation += Math.PI / 2
+
+  onBuild: (args)->
+    blockList = args[0]
+    player = args[1]
+    @build(blockList, player)
+    @checkTerritory(player)
+
+
+  build: (blockList, player) ->
+    for block in blockList
+      @game.me.map1x1.putTileWorldXY(@game.me.TILES.walls[player], block.x, block.y, 20, 20, 'objects')
 
   checkOverlap: ()->
     canbuild = true

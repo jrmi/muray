@@ -38,16 +38,33 @@ class Start
     # TODO move callback better !!!!
     #game.input.addMoveCallback(updateMarker, this)
 
+    #if @game.currentPlayer == 1
+    #  @game.session.publish @game.prefix + 'player2', [true]
+    #  @nextState()
+      #@game.session.publish @game.prefix + 'turnEnded', ['start', @game.currentPlayer]
+
+    #@turnEnded = true
+    #@otherEnded = false
+
+  update: ()->
     if @game.currentPlayer == 1
       @game.session.publish @game.prefix + 'player2', [true]
+      @nextState()
 
 
   incomingPlayer2: (args)->
     console.log('Incomming')
-    @game.session.publish @game.prefix + 'turnEnded', ['start', @game.currentPlayer]
-    @game.state.start 'main', false
+    #@game.session.publish @game.prefix + 'turnEnded', ['start', @game.currentPlayer]
+    #if @otherEnded
+    @nextState()
 
   onTurnEnded: (args) ->
+    if @turnEnded
+      @nextState()
+    else
+      @otherEnded = true
+
+  nextState: () ->
     @game.state.start 'main', false
 
   inputCallback: ()->
