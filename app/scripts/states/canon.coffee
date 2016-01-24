@@ -3,7 +3,7 @@ class Canon
   create : ->
     @game.stage.disableVisibilityChange = true
     @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'canon'
-    @marker.alpha = 0.3
+    @marker.alpha = 0.6
 
     @cantbuilds= []
 
@@ -50,16 +50,21 @@ class Canon
 
   update : ->
     if !@turnEnded and @maxCanon > 0
-      @checkCanon(@game.input.x, @game.input.y, @game.currentPlayer)
-      p = @game.XYWorldToTiledWorld(@game.input, @game.layer1)
+      p = @correctedInput()
+      @checkCanon(p.x, p.y, @game.currentPlayer)
+      p = @game.XYWorldToTiledWorld(p, @game.layer1)
       @marker.x = p.x
       @marker.y = p.y
 
+  correctedInput: ()->
+    return new Phaser.Point(@game.input.x - 10, @game.input.y - 10)
+
   inputCallback: ()->
     if !@turnEnded and @maxCanon > 0
-      if @checkCanon(@game.input.x, @game.input.y, @game.currentPlayer)
-        @addCanon(@game.input.x, @game.input.y)
-        @game.session.publish @game.prefix + 'addCanon', [@game.input.x, @game.input.y, @game.currentPlayer]
+      p = @correctedInput()
+      if @checkCanon(p.x, p.y, @game.currentPlayer)
+        @addCanon(p.x, p.y)
+        @game.session.publish @game.prefix + 'addCanon', [p.x, p.y, @game.currentPlayer]
         @game.drop.play()
         @maxCanon--
 
@@ -103,7 +108,7 @@ class Canon
         if @game.map1x1.getTile(xx, yy, 'objects') or !(secure? and secure.index == @game.TILES.secured[player])
           canbuild = false
           c = @game.map1x1.game.add.sprite  xx * 20, yy * 20, 'cantbuild'
-          c.alpha = 0.5
+          c.alpha = 0.7
           @cantbuilds.push(c)
 
     return canbuild

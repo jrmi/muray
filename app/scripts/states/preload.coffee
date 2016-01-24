@@ -15,6 +15,7 @@ class Preload
     @game.load.image 'wall', 'assets/sprites/wall.png'
     @game.load.image 'cantbuild', 'assets/sprites/cantbuild.png'
     @game.load.image 'castleselect', 'assets/sprites/castleselect.png'
+    @game.load.spritesheet('restart', 'assets/sprites/restart.png', 117, 40)
 
     @game.load.image 'tileset', 'assets/tilemaps/tilemap.png'
     @game.load.tilemap 'map', 'assets/tilemaps/map.json', null, Phaser.Tilemap.TILED_JSON

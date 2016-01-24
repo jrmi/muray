@@ -37,9 +37,6 @@ class Start
     @game.secured = @game.add.audio('secure')
     @game.cantbuild = @game.add.audio('cantbuild')
 
-    @game.time.events.loop(Phaser.Timer.SECOND, () ->
-      console.log('tic')
-    , this)
 
     # TODO move callback better !!!!
     #@game.input.addMoveCallback () ->

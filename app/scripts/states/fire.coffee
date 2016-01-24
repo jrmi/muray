@@ -100,9 +100,9 @@ class Fire
       tile = @game.map1x1.getTileWorldXY(dest.x, dest.y, 20, 20, 'objects')
       if tile? and tile.index in @game.TILES.walls
         @game.map1x1.putTileWorldXY(@game.TILES.garbage, dest.x, dest.y, 20, 20, 'objects')
+        @game.boum.play()
       shot.destroy()
       @fireing--
-      @game.boum.play()
       endCallback()
     , this
 

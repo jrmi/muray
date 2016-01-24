@@ -45,6 +45,9 @@ class Game extends Phaser.Game
 
     @state.start 'boot'
 
+  reset: ()->
+    @canons = []
+    @castles = []
 
   XYTileToWorld2: (p, map)->
     p.x = p.x * map.tileWidth + Math.round(map.tileWidth / 2)

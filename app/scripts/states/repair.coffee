@@ -136,7 +136,7 @@ class Repair
       if tile and tile.index not in [@game.TILES.garbage, @game.TILES.house] or @outOfBound(x,y)
         canbuild = false
         c = @game.map1x1.game.add.sprite  x, y, 'cantbuild'
-        c.alpha = 0.5
+        c.alpha = 0.7
         c.anchor.setTo 0.5, 0.5
         @cantbuilds.push(c)
     , this
