@@ -20,8 +20,8 @@ class Repair
     , this)
 
     @updateMarker()
-    @checkTerritory(@game.currentPlayer)
-    @checkTerritory(@game.otherPlayer)
+    @game.checkTerritory(@game.currentPlayer)
+    @game.checkTerritory(@game.otherPlayer)
 
     @turnEnded = false
     @otherEnded = false
@@ -80,67 +80,25 @@ class Repair
       @checkOverlap()
 
 
-  floodFill: (map, x, y, source, dest) ->
-    if map[x][y] != source
-      return
-
-    map[x][y] = dest
-
-    for i in [x-1..x+1]
-      for j in [y-1..y+1]
-        if i >= 0 and i <= 41 and j >=0 and j <= 31
-          @floodFill(map, i, j, source, dest)
-
-
-  checkTerritory: (player) ->
-    table = []
-    for x in [0..43]
-      line = []
-      for y in [0..33]
-        if x == 0 || x == 43 || y == 0 || y == 33
-          res = 1
-        else
-          if x == 1 || x == 42 || y == 1 || y == 32
-            res = 0
-          else
-            tile = @game.map1x1.getTile(x - 2, y - 2, 'objects')
-            res = 0
-            if tile? and tile.index == @game.TILES.walls[player]
-              res = 1
-        line.push(res)
-      table.push(line)
-
-    @floodFill(table, 1, 1, 0, 2)
-
-    for x in [0..40]
-      for y in [0..30]
-
-        if table[x + 2][y + 2] == 0
-          t = @game.TILES.secured[player]
-        else
-          t = null
-
-        cur = @game.map1x1.getTile(x, y, 'secured')
-        if !cur? or cur.index == @game.TILES.secured[player]
-          @game.map1x1.putTile(t, x, y, 'secured')
-
-
   inputCallback: ()->
     if @game.input.activePointer.rightButton.isDown
       if @checkOverlap()
 
         blockList = []
         @marker.forEach (item) ->
-          blockList.push({x:Math.round(item.world.x), y: Math.round(item.world.y)})
+          p = new Phaser.Point()
+          @game.layer1.getTileXY(item.world.x, item.world.y, p)
+          #blockList.push({x:Math.round(item.world.x), y: Math.round(item.world.y)})
+          blockList.push(p)
         , this
 
-        @build(blockList, @game.currentPlayer)
+        @game.buildTile(blockList, @game.currentPlayer)
 
-        @game.fx.play()
+        @game.drop.play()
 
         @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
 
-        @checkTerritory(@game.currentPlayer)
+        @game.checkTerritory(@game.currentPlayer)
         @updateMarker()
 
     if @game.input.activePointer.leftButton.isDown
@@ -149,13 +107,8 @@ class Repair
   onBuild: (args)->
     blockList = args[0]
     player = args[1]
-    @build(blockList, player)
-    @checkTerritory(player)
-
-
-  build: (blockList, player) ->
-    for block in blockList
-      @game.map1x1.putTileWorldXY(@game.TILES.walls[player], block.x, block.y, 20, 20, 'objects')
+    @game.buildTile(blockList, player)
+    @game.checkTerritory(player)
 
   checkOverlap: ()->
     canbuild = true

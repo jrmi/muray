@@ -14,11 +14,12 @@ class Preload
     @game.load.image 'tank', 'assets/sprites/tank1.png'
     @game.load.image 'wall', 'assets/sprites/wall.png'
     @game.load.image 'cantbuild', 'assets/sprites/cantbuild.png'
+    @game.load.image 'castleselect', 'assets/sprites/castleselect.png'
 
     @game.load.image 'tileset', 'assets/tilemaps/tilemap.png'
     @game.load.tilemap 'map', 'assets/tilemaps/map.json', null, Phaser.Tilemap.TILED_JSON
 
-    @game.load.audio 'sfx', ['assets/sound/drop.wav']
+    @game.load.audio 'drop', ['assets/sound/drop.wav']
     @game.load.audio 'fire', ['assets/sound/cannon.wav']
 
 

@@ -58,7 +58,7 @@ class Canon
       if @checkCanon(@game.input.x, @game.input.y, @game.currentPlayer)
         @addCanon(@game.input.x, @game.input.y)
         @game.session.publish @game.prefix + 'addCanon', [@game.input.x, @game.input.y, @game.currentPlayer]
-        @game.fx.play()
+        @game.drop.play()
 
   onAddCanon: (args) ->
     @addCanon(args[0], args[1])

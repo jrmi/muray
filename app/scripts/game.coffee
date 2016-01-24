@@ -5,6 +5,7 @@ Preload = require './states/preload'
 Menu    = require './states/menu'
 Start    = require './states/start'
 Main    = require './states/main'
+Castle    = require './states/castle'
 Canon    = require './states/canon'
 Fire    = require './states/fire'
 Repair    = require './states/repair'
@@ -24,6 +25,7 @@ class Game extends Phaser.Game
   }
 
   canons : []
+  castles : []
 
   constructor : ->
 
@@ -34,6 +36,7 @@ class Game extends Phaser.Game
     @state.add 'menu', Menu
     @state.add 'start', Start
     @state.add 'main', Main
+    @state.add 'castle', Castle
     @state.add 'canon', Canon
     @state.add 'fire', Fire
     @state.add 'repair', Repair
@@ -47,15 +50,68 @@ class Game extends Phaser.Game
     return p
 
   XYTileToWorld: (p, map)->
-    p.x = p.x * map.tileWidth
-    p.y = p.y * map.tileWidth
-    return p
+    p2 = new Phaser.Point()
+    p2.x = p.x * map.tileWidth
+    p2.y = p.y * map.tileWidth
+    return p2
 
   XYWorldToTiledWorld: (point, layer)->
     p = new Phaser.Point()
     layer.getTileXY(point.x, point.y, p)
-    @XYTileToWorld(p, layer.map)
+    p = @XYTileToWorld(p, layer.map)
     return  p
+
+  build: (blockList, player) ->
+    for block in blockList
+      @map1x1.putTileWorldXY(@TILES.walls[player], block.x, block.y, 20, 20, 'objects')
+
+  buildTile: (blockList, player) ->
+    for block in blockList
+      @map1x1.putTile(@TILES.walls[player], block.x, block.y, 'objects')
+
+  floodFill: (map, x, y, source, dest) ->
+    if map[x][y] != source
+      return
+
+    map[x][y] = dest
+
+    for i in [x-1..x+1]
+      for j in [y-1..y+1]
+        if i >= 0 and i <= 41 and j >=0 and j <= 31
+          @floodFill(map, i, j, source, dest)
+
+  checkTerritory: (player) ->
+    table = []
+    for x in [0..43]
+      line = []
+      for y in [0..33]
+        if x == 0 || x == 43 || y == 0 || y == 33
+          res = 1
+        else
+          if x == 1 || x == 42 || y == 1 || y == 32
+            res = 0
+          else
+            tile = @map1x1.getTile(x - 2, y - 2, 'objects')
+            res = 0
+            if tile? and tile.index == @TILES.walls[player]
+              res = 1
+        line.push(res)
+      table.push(line)
+
+    @floodFill(table, 1, 1, 0, 2)
+
+    for x in [0..40]
+      for y in [0..30]
+
+        if table[x + 2][y + 2] == 0
+          t = @TILES.secured[player]
+        else
+          t = null
+
+        cur = @map1x1.getTile(x, y, 'secured')
+        if !cur? or cur.index == @TILES.secured[player]
+          @map1x1.putTile(t, x, y, 'secured')
+
 
 window.onload = ->
 
@@ -82,6 +138,8 @@ window.onload = ->
     game.session = session
 
     game.prefix = 'muray.' + uuid + '.'
+
+    console.log('Game object created')
 
     if game.currentPlayer == 0
       session.subscribe game.prefix + 'player2', (args) ->

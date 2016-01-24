@@ -31,7 +31,7 @@ class Start
 
     @game.text.setText('Waiting for other player...')
 
-    @game.fx = @game.add.audio('sfx')
+    @game.drop = @game.add.audio('drop')
     @game.fire = @game.add.audio('fire')
 
     @game.time.events.loop(Phaser.Timer.SECOND, () ->
@@ -39,7 +39,7 @@ class Start
     , this)
 
     # TODO move callback better !!!!
-    #game.input.addMoveCallback(updateMarker, this)
+    #@game.input.addMoveCallback () ->
 
   update: ()->
     if @game.currentPlayer == 1
