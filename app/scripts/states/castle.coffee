@@ -3,6 +3,8 @@ class Castle
 
   create : ->
     @counter = 5
+    @game.text.setText('' + @counter)
+
     @turnEnded = false
     @otherEnded = false
 
@@ -24,10 +26,6 @@ class Castle
 
     @selectCastle(first[@game.currentPlayer])
 
-    #if @game.currentPlayer == 0
-    #  @game.session.publish @game.prefix + 'turnEnded', ['castle', @game.currentPlayer]
-    #  @game.state.start 'canon', false
-
   counterCallback : () ->
     if !@turnEnded
       if @counter > 0
@@ -40,7 +38,6 @@ class Castle
           @turnEnded = true
         else
           @nextState()
-
 
   onTurnEnded: (args) ->
     if @turnEnded

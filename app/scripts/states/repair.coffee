@@ -26,7 +26,7 @@ class Repair
     @turnEnded = false
     @otherEnded = false
 
-    @counter = 10
+    @counter = 15
     @game.text.setText('' + @counter)
     @cleanGarbage()
 
@@ -88,14 +88,13 @@ class Repair
 
 
   inputCallback: ()->
-    if @game.input.activePointer.rightButton.isDown
+    if @game.input.activePointer.leftButton.isDown
       if @checkOverlap()
 
         blockList = []
         @marker.forEach (item) ->
           p = new Phaser.Point()
           @game.layer1.getTileXY(item.world.x, item.world.y, p)
-          #blockList.push({x:Math.round(item.world.x), y: Math.round(item.world.y)})
           blockList.push(p)
         , this
 
@@ -105,10 +104,14 @@ class Repair
 
         @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
 
-        @game.checkTerritory(@game.currentPlayer)
-        @updateMarker()
+        if @game.checkTerritory(@game.currentPlayer)
+          @game.secured.play()
 
-    if @game.input.activePointer.leftButton.isDown
+        @updateMarker()
+      else
+        @game.cantbuild.play()
+
+    if @game.input.activePointer.rightButton.isDown
       @marker.rotation += Math.PI / 2
 
   onBuild: (args)->
@@ -116,6 +119,10 @@ class Repair
     player = args[1]
     @game.buildTile(blockList, player)
     @game.checkTerritory(player)
+
+
+  outOfBound: (x, y) ->
+    return (@game.currentPlayer == 0 and x >= 380) or (@game.currentPlayer == 1 and x <= 420)
 
   checkOverlap: ()->
     canbuild = true
@@ -126,7 +133,7 @@ class Repair
       x = Math.round(item.world.x)
       y = Math.round(item.world.y)
       tile = @game.map1x1.getTileWorldXY(x, y)
-      if tile and tile.index not in [@game.TILES.garbage, @game.TILES.house]
+      if tile and tile.index not in [@game.TILES.garbage, @game.TILES.house] or @outOfBound(x,y)
         canbuild = false
         c = @game.map1x1.game.add.sprite  x, y, 'cantbuild'
         c.alpha = 0.5

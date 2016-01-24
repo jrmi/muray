@@ -21,6 +21,9 @@ class Preload
 
     @game.load.audio 'drop', ['assets/sound/drop.wav']
     @game.load.audio 'fire', ['assets/sound/cannon.wav']
+    @game.load.audio 'boum', ['assets/sound/boum2.wav']
+    @game.load.audio 'cantbuild', ['assets/sound/cantbuild.wav']
+    @game.load.audio 'secure', ['assets/sound/secure.wav']
 
 
   create: ->

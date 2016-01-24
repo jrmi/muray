@@ -21,7 +21,7 @@ class Fire
 
     @fireing = 0
 
-    @counter = 5
+    @counter = 10
     @game.text.setText('' + @counter)
 
   counterCallback : () ->
@@ -70,7 +70,7 @@ class Fire
         @currentCanon++
         if @currentCanon >= @myCanons.length
           @currentCanon = 0
-        @game.fire.play()
+
 
         @fire canon, {x: @game.input.x, y: @game.input.y}, ->
           canon.busy = false
@@ -81,6 +81,7 @@ class Fire
 
   fire: (src, dest, endCallback=->) ->
     @fireing++
+    @game.fire.play()
     shot = @game.add.sprite  src.x, src.y, 'shot'
     shot.anchor.setTo 0.5, 0.5
     shot.scale.x = 0.5
@@ -101,6 +102,7 @@ class Fire
         @game.map1x1.putTileWorldXY(@game.TILES.garbage, dest.x, dest.y, 20, 20, 'objects')
       shot.destroy()
       @fireing--
+      @game.boum.play()
       endCallback()
     , this
 

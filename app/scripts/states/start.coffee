@@ -33,6 +33,9 @@ class Start
 
     @game.drop = @game.add.audio('drop')
     @game.fire = @game.add.audio('fire')
+    @game.boum = @game.add.audio('boum')
+    @game.secured = @game.add.audio('secure')
+    @game.cantbuild = @game.add.audio('cantbuild')
 
     @game.time.events.loop(Phaser.Timer.SECOND, () ->
       console.log('tic')

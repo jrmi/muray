@@ -65,6 +65,8 @@ class Canon
 
         if @maxCanon < 1
           @marker.visible = false
+      else
+        @game.cantbuild.play()
 
   onAddCanon: (args) ->
     @addCanon(args[0], args[1])

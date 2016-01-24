@@ -112,8 +112,10 @@ class Game extends Phaser.Game
 
     @floodFill(table, 1, 1, 0, 2)
 
-    for x in [0..40]
-      for y in [0..30]
+    secured = false
+
+    for x in [0..39]
+      for y in [0..29]
 
         if table[x + 2][y + 2] == 0
           t = @TILES.secured[player]
@@ -121,9 +123,12 @@ class Game extends Phaser.Game
           t = null
 
         cur = @map1x1.getTile(x, y, 'secured')
-        if !cur? or cur.index == @TILES.secured[player]
+        if t == null and cur? and cur.index == @TILES.secured[player] or t != null and !cur?
+          if t != null and cur == null
+            secured = true
           @map1x1.putTile(t, x, y, 'secured')
 
+    return secured
 
 window.onload = ->
 
