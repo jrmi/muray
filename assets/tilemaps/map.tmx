@@ -10,12 +10,12 @@
  </layer>
  <layer name="secured" width="40" height="30">
   <data encoding="base64" compression="zlib">
-   eJztzqENADAMBLHQdv+BowzwqEGVLR2/KgDGCW26IX/+/L39AQDwtwbSuQKt
+   eJztwTEBAAAAwqD1T20ND6AAAAAA4NcAEsAAAQ==
   </data>
  </layer>
  <layer name="objects" width="40" height="30">
   <data encoding="base64" compression="zlib">
-   eJzt2DEKwCAMQNG2drOT9z+sdhPBhhihUf6DTBn8IDiYDr/S3wEApjmFmeESRuob2Wl8NezUF8rcnZ1F3dCeoemLZZ7OzqJuaM/Y6X41Ow1rn+f3BQAAYAWe/2DetgxXlwDZ
+   eJzt2EENAAAIxDA0nH+xBBWQ0CrYe6m7sh0AAAAA8MDlBzNtDbZuAEk=
   </data>
  </layer>
 </map>
