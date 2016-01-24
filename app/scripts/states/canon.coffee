@@ -17,6 +17,8 @@ class Canon
     @counter = 5
     @game.text.setText('' + @counter)
 
+    @maxCanon = 1 + @game.countCastle(@game.currentPlayer)
+
   counterCallback : () ->
     if !@turnEnded
       if @counter > 0
@@ -47,18 +49,22 @@ class Canon
     @marker.destroy()
 
   update : ->
-    if !@turnEnded
+    if !@turnEnded and @maxCanon > 0
       @checkCanon(@game.input.x, @game.input.y, @game.currentPlayer)
       p = @game.XYWorldToTiledWorld(@game.input, @game.layer1)
       @marker.x = p.x
       @marker.y = p.y
 
   inputCallback: ()->
-    if !@turnEnded
+    if !@turnEnded and @maxCanon > 0
       if @checkCanon(@game.input.x, @game.input.y, @game.currentPlayer)
         @addCanon(@game.input.x, @game.input.y)
         @game.session.publish @game.prefix + 'addCanon', [@game.input.x, @game.input.y, @game.currentPlayer]
         @game.drop.play()
+        @maxCanon--
+
+        if @maxCanon < 1
+          @marker.visible = false
 
   onAddCanon: (args) ->
     @addCanon(args[0], args[1])

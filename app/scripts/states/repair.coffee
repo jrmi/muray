@@ -50,7 +50,7 @@ class Repair
       @otherEnded = true
 
   nextState: ()->
-    @game.state.start 'canon', false
+    @game.state.start 'victory', false
 
   cleanState: ()->
     @game.text.setText('Waiting...')

@@ -29,7 +29,7 @@ class Start
     @game.text = @game.add.text(@game.world.centerX, @game.world.centerY, '0', { font: "64px Arial", fill: "#ffffff", align: "center" })
     @game.text.anchor.setTo(0.5, 0.5)
 
-    @game.text.setText('Waiting for other player...')
+    @game.text.setText('Waiting for other...')
 
     @game.drop = @game.add.audio('drop')
     @game.fire = @game.add.audio('fire')

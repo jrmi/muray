@@ -9,6 +9,7 @@ Castle    = require './states/castle'
 Canon    = require './states/canon'
 Fire    = require './states/fire'
 Repair    = require './states/repair'
+Victory    = require './states/victory'
 
 
 class Game extends Phaser.Game
@@ -40,6 +41,7 @@ class Game extends Phaser.Game
     @state.add 'canon', Canon
     @state.add 'fire', Fire
     @state.add 'repair', Repair
+    @state.add 'victory', Victory
 
     @state.start 'boot'
 
@@ -68,6 +70,16 @@ class Game extends Phaser.Game
   buildTile: (blockList, player) ->
     for block in blockList
       @map1x1.putTile(@TILES.walls[player], block.x, block.y, 'objects')
+
+  countCastle: (player)->
+    count = 0
+    for c in @castles
+      t = @map1x1.getTile(c.x, c.y, 'secured')
+      if t? and t.index == @TILES.secured[player]
+        count++
+
+    return count
+
 
   floodFill: (map, x, y, source, dest) ->
     if map[x][y] != source
