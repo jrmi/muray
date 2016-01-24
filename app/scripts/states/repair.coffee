@@ -30,6 +30,8 @@ class Repair
     @game.text.setText('' + @counter)
     @cleanGarbage()
 
+    @game.input.keyboard.addCallbacks(this, null, null, @rotate)
+
   cleanGarbage: ()->
     for x in [0..39]
       for y in [0..29]
@@ -64,7 +66,6 @@ class Repair
     @marker.destroy()
     for c in @cantbuilds
       c.destroy()
-
 
   updateMarker: ()->
     if @marker?
@@ -112,7 +113,11 @@ class Repair
         @game.cantbuild.play()
 
     if @game.input.activePointer.rightButton.isDown
-      @marker.rotation += Math.PI / 2
+      @rotate()
+
+  rotate: ()->
+    console.log()
+    @marker.rotation += Math.PI / 2
 
   onBuild: (args)->
     blockList = args[0]
