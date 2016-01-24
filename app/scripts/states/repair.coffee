@@ -28,7 +28,14 @@ class Repair
 
     @counter = 10
     @game.text.setText('' + @counter)
+    @cleanGarbage()
 
+  cleanGarbage: ()->
+    for x in [0..39]
+      for y in [0..29]
+        t = @game.map1x1.getTile(x, y, 'objects')
+        if t? and t.index == @game.TILES.garbage
+          @game.map1x1.putTile(null, x, y, 'objects')
 
   counterCallback : () ->
     if !@turnEnded
