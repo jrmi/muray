@@ -11,6 +11,9 @@ Fire    = require './states/fire'
 Repair    = require './states/repair'
 Victory    = require './states/victory'
 
+uidChar = '12345679abcdefghjkmnpqrstuvwxyz'
+
+wampPrefix = 'muray.'
 
 class Game extends Phaser.Game
 
@@ -25,8 +28,9 @@ class Game extends Phaser.Game
     canon: [19, 20, 27, 28]
   }
 
-  canons : []
-  castles : []
+  canons: []
+  castles: []
+  paired: false
 
   constructor : ->
 
@@ -48,6 +52,22 @@ class Game extends Phaser.Game
   reset: ()->
     @canons = []
     @castles = []
+
+  genUid: (length=5) ->
+    uid = ""
+    for x in [0..length]
+      uid += @pick uidChar
+
+    return uid
+
+  rand: (min, max) ->
+    Math.random() * (max - min) + min
+
+  randint: (min, max) ->
+    Math.round(@rand(min, max))
+
+  pick: (list) ->
+    return list[@randint(0, list.length - 1)]
 
   XYTileToWorld2: (p, map)->
     p.x = p.x * map.tileWidth + Math.round(map.tileWidth / 2)
@@ -135,7 +155,7 @@ class Game extends Phaser.Game
 
 window.onload = ->
 
-  uuid = window.location.hash.replace('#', '')
+  hashUid = window.location.hash.replace('#', '')
 
   conn = new Autobahn.Connection {
     url: 'ws://outils.youkidea.com:8787/ws',
@@ -146,45 +166,88 @@ window.onload = ->
     console.log('Wamp connection established')
     game = new Game()
 
-    # Handle first or second player
-    if uuid
-      game.currentPlayer = 1
-      game.otherPlayer = 0
-    else
-      uuid = 'test'
-      game.currentPlayer = 0
-      game.otherPlayer = 1
+    game.myUid = game.genUid()
+
+    console.log(game.myUid)
 
     game.session = session
 
-    game.prefix = 'muray.' + uuid + '.'
+    game.prefix = wampPrefix + game.myUid + '.'
 
     console.log('Game object created')
 
-    if game.currentPlayer == 0
-      session.subscribe game.prefix + 'player2', (args) ->
-        console.log('player2 is there ', args)
-        game.state.getCurrentState().incomingPlayer2(args)
+    subscribeGameEvents = (game) ->
 
-    game.session.subscribe game.prefix + 'turnEnded', (args) ->
-      console.log "Turn ended received", args
-      if game.state.getCurrentState().onTurnEnded?
-        game.state.getCurrentState().onTurnEnded(args)
+      game.session.subscribe game.prefix + 'turnEnded', (args) ->
+        console.log "Turn ended received", args
+        if game.state.getCurrentState().onTurnEnded?
+          game.state.getCurrentState().onTurnEnded(args)
 
-    game.session.subscribe game.prefix + 'addCanon', (args) ->
-      console.log "Add canon received", args
-      if game.state.getCurrentState().onAddCanon?
-        game.state.getCurrentState().onAddCanon(args)
+      game.session.subscribe game.prefix + 'addCanon', (args) ->
+        console.log "Add canon received", args
+        if game.state.getCurrentState().onAddCanon?
+          game.state.getCurrentState().onAddCanon(args)
 
-    game.session.subscribe game.prefix + 'fire', (args) ->
-      console.log "Fire received", args
-      if game.state.getCurrentState().onFire?
-        game.state.getCurrentState().onFire(args)
+      game.session.subscribe game.prefix + 'fire', (args) ->
+        console.log "Fire received", args
+        if game.state.getCurrentState().onFire?
+          game.state.getCurrentState().onFire(args)
 
-    game.session.subscribe game.prefix + 'build', (args) ->
-      console.log "Build received", args
-      if game.state.getCurrentState().onBuild?
-        game.state.getCurrentState().onBuild(args)
+      game.session.subscribe game.prefix + 'build', (args) ->
+        console.log "Build received", args
+        if game.state.getCurrentState().onBuild?
+          game.state.getCurrentState().onBuild(args)
+
+      game.session.subscribe game.prefix + 'restart', (args) ->
+        console.log "Restart received", args
+        game.reset()
+        game.state.start 'menu', true
+
+    game.session.subscribe wampPrefix + 'newPlayer', (args) ->
+      if not game.paired
+        console.log "newPlayer received", args
+
+        otherUid = args[0]
+        session.call(wampPrefix + otherUid + '.join', [game.myUid]).then (res) ->
+          console.log('Call join result', res)
+          if res is null
+            return
+
+          game.paired = true
+          game.prefix = wampPrefix + otherUid + '.'
+
+          if res == 1
+            game.currentPlayer = 1
+            game.otherPlayer = 0
+          if res == 0
+            game.currentPlayer = 0
+            game.otherPlayer = 1
+
+          subscribeGameEvents(game)
+
+    game.session.register wampPrefix + game.myUid + '.join', (args) ->
+      if not game.paired
+        console.log('Paired with ' + args[0])
+        game.paired = true
+        game.prefix = wampPrefix + game.myUid + '.'
+
+        res = game.pick([0,1])
+        if res == 1
+          game.currentPlayer = 0
+          game.otherPlayer = 1
+        if res == 0
+          game.currentPlayer = 1
+          game.otherPlayer = 0
+
+        subscribeGameEvents(game)
+
+        return res
+      else
+        return null
+
+    game.session.publish(wampPrefix + 'newPlayer', [game.myUid])
+
+
 
     console.log('Connection opened')
 

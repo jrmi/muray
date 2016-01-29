@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="Nouveau document 1">
+   sodipodi:docname="sprites.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,7 +28,7 @@
      inkscape:cx="434.3727"
      inkscape:cy="871.7118"
      inkscape:document-units="px"
-     inkscape:current-layer="g3013"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1855"
      inkscape:window-height="1056"
@@ -53,7 +53,10 @@
      id="layer1">
     <g
        id="g3008"
-       transform="matrix(0.89000294,0,0,0.89000294,221.43357,-17.287591)">
+       transform="matrix(0.89000294,0,0,0.89000294,221.43357,-17.287591)"
+       inkscape:export-filename="/home/jeremie/Developpement/muray/app/assets/sprites/restart.png"
+       inkscape:export-xdpi="44.71793"
+       inkscape:export-ydpi="44.71793">
       <rect
          style="opacity:0.77385158;fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:#0af900;stroke-width:9.81581688;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect2991"
@@ -75,7 +78,10 @@
     </g>
     <g
        id="g3003"
-       transform="matrix(0.89000294,0,0,0.89000294,-255.85837,-18.186629)">
+       transform="matrix(0.89000294,0,0,0.89000294,-255.85837,-18.186628)"
+       inkscape:export-filename="/home/jeremie/Developpement/muray/app/assets/sprites/restart.png"
+       inkscape:export-xdpi="44.71793"
+       inkscape:export-ydpi="44.71793">
       <rect
          style="opacity:0.77385158;fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:#0af900;stroke-width:9.81581688;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="rect2997"
@@ -97,22 +103,25 @@
     </g>
     <g
        id="g3013"
-       transform="matrix(0.89000294,0,0,0.89000294,-37.569149,-17.287591)">
+       transform="matrix(0.89000294,0,0,0.89000294,-37.569149,-17.287591)"
+       inkscape:export-filename="/home/jeremie/Developpement/muray/app/assets/sprites/restart.png"
+       inkscape:export-xdpi="44.71793"
+       inkscape:export-ydpi="44.71793">
       <rect
-         y="41.606392"
+         y="40.596241"
          x="597.38678"
          height="81.008537"
          width="254.75478"
          id="rect2985"
-         style="opacity:0.77385157999999998;fill:#009d00;fill-opacity:1;fill-rule:evenodd;stroke:#0af900;stroke-width:9.81581687999999986;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+         style="opacity:0.77385158;fill:#009d00;fill-opacity:1;fill-rule:evenodd;stroke:#0af900;stroke-width:9.81581688;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
       <text
          sodipodi:linespacing="125%"
          id="text2987"
-         y="104.73466"
+         y="103.72451"
          x="613.58917"
          style="font-size:64px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Century Schoolbook L;-inkscape-font-specification:Century Schoolbook L Medium"
          xml:space="preserve"><tspan
-           y="104.73466"
+           y="103.72451"
            x="613.58917"
            id="tspan2989"
            sodipodi:role="line">Restart</tspan></text>

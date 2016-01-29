@@ -7,6 +7,7 @@ class Castle
 
     @turnEnded = false
     @otherEnded = false
+    @selected = null
 
     @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'castleselect'
     @marker.anchor.setTo 0.5, 0.5

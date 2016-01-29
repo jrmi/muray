@@ -42,14 +42,11 @@ class Start
     #@game.input.addMoveCallback () ->
 
   update: ()->
-    if @game.currentPlayer == 1
-      @game.session.publish @game.prefix + 'player2', [true]
+    if @game.paired
       @nextState()
-
-
-  incomingPlayer2: (args)->
-    console.log('Incomming')
-    @nextState()
+    #if @game.currentPlayer == 1
+    #  @game.session.publish @game.prefix + 'player2', [true]
+    #  @nextState()
 
   nextState: () ->
     @game.state.start 'main', false
