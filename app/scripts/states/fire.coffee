@@ -55,6 +55,7 @@ class Fire
       else
         @game.text.setText('Cease fire !')
         @cleanState()
+
         # wait for all shot to finish
         if @fireing > 0
           return
@@ -97,7 +98,7 @@ class Fire
       if canon?
         canon.busy = true
         @fire canon, {x: @game.input.x, y: @game.input.y}, =>
-          if !@canFire
+          if !@canFire and @counter > 0
             @marker.destroy()
             @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'crosshair'
           canon.busy = false

@@ -50,6 +50,8 @@ class Game extends Phaser.Game
     @state.start 'boot'
 
   reset: ()->
+    for c in @canons
+      c.destroy()
     @canons = []
     @castles = []
 
