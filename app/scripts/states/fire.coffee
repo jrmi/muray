@@ -4,7 +4,7 @@ class Fire
     @game.stage.disableVisibilityChange = true
     @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'notready'
 
-    @currentCanon = 0
+    @canFire = true
 
     @myCanons = []
     for c in @game.canons
@@ -85,20 +85,28 @@ class Fire
     for canon in @myCanons
       canon.rotation = @game.physics.arcade.angleBetween(canon, @game.input) + Math.PI / 2
 
+  findFreeCanon: () ->
+    for c in @myCanons
+      if not c.busy
+        return c
+    return null
+
   inputCallback: () ->
     if @started and @myCanons.length and @counter > 0
-      canon = @myCanons[@currentCanon]
-      if not canon.busy
+      canon = @findFreeCanon()
+      if canon?
         canon.busy = true
-
-        @currentCanon++
-        if @currentCanon >= @myCanons.length
-          @currentCanon = 0
-
-
-        @fire canon, {x: @game.input.x, y: @game.input.y}, ->
+        @fire canon, {x: @game.input.x, y: @game.input.y}, =>
+          if !@canFire
+            @marker.destroy()
+            @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'crosshair'
           canon.busy = false
         @game.session.publish @game.prefix + 'fire', [{x: canon.x, y:canon.y}, {x: @game.input.x, y: @game.input.y}]
+
+        if !@findFreeCanon()?
+          @canFire = false
+          @marker.destroy()
+          @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'notready'
 
   onFire: (args)->
     @fire(args[0], args[1])
