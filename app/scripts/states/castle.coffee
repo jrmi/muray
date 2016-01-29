@@ -3,12 +3,40 @@ class Castle
 
   create : ->
     @counter = 5
-    @game.text.setText('' + @counter)
 
     @turnEnded = false
     @otherEnded = false
     @selected = null
 
+    @first = []
+    @first.push(@addCastle(7, 5))
+    @addCastle(8, 14)
+    @addCastle(7, 23)
+
+    @first.push(@addCastle(29, 5))
+    @addCastle(28, 14)
+    @addCastle(29, 23)
+
+
+    @started = false
+    @game.text.alpha = 0.1
+    @game.text.setText('Choose your castle')
+
+    appear = @game.add.tween(@game.text).to( { alpha: 1 }, 200, "Linear", true)
+
+    appear.onComplete.add () ->
+      @game.time.events.add Phaser.Timer.SECOND * 2, () ->
+        disappear = @game.add.tween(@game.text).to( { alpha: 0.1 }, 200, "Linear", true)
+        disappear.onComplete.add () ->
+          @started = true
+          @game.text.setText('' + @counter)
+          @game.text.alpha = 1
+          @startState()
+        , this
+      , this
+    , this
+
+  startState: ()->
     @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'castleselect'
     @marker.anchor.setTo 0.5, 0.5
 
@@ -16,16 +44,7 @@ class Castle
       @counterCallback()
     , this)
 
-    first = []
-    first.push(@addCastle(7, 5))
-    @addCastle(8, 14)
-    @addCastle(7, 23)
-
-    first.push(@addCastle(29, 5))
-    @addCastle(28, 14)
-    @addCastle(29, 23)
-
-    @selectCastle(first[@game.currentPlayer])
+    @selectCastle(@first[@game.currentPlayer])
 
   counterCallback : () ->
     if !@turnEnded
@@ -50,14 +69,14 @@ class Castle
     @game.state.start 'canon', false
 
   cleanState: ()->
-    @game.text.setText('Place canon ...')
+    @game.text.setText('')
 
     if !@selected?
       @buildCastle(@currentCastle, @game.currentPlayer)
       @game.drop.play()
 
   update : ->
-    if !@turnEnded and !@selected?
+    if @started and !@turnEnded and !@selected?
       if @game.currentPlayer == 0 and @game.input.x > 400
         return
       if @game.currentPlayer == 1 and @game.input.x < 400
@@ -74,9 +93,6 @@ class Castle
     if !@turnEnded and !@selected?
       @buildCastle(@currentCastle, @game.currentPlayer)
       @game.drop.play()
-
-  moveCallback: ()->
-    console.log('toto')
 
   selectCastle: (castle) ->
     @currentCastle = castle

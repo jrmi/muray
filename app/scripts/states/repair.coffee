@@ -14,12 +14,6 @@ class Repair
     @game.stage.disableVisibilityChange = true
     @cantbuilds = []
 
-
-    @game.time.events.loop(Phaser.Timer.SECOND, () ->
-      @counterCallback()
-    , this)
-
-    @updateMarker()
     @game.checkTerritory(@game.currentPlayer)
     @game.checkTerritory(@game.otherPlayer)
 
@@ -27,8 +21,31 @@ class Repair
     @otherEnded = false
 
     @counter = 15
-    @game.text.setText('' + @counter)
     @cleanGarbage()
+
+    @started = false
+    @game.text.alpha = 0.1
+    @game.text.setText('Repair your walls !')
+
+    appear = @game.add.tween(@game.text).to( { alpha: 1 }, 200, "Linear", true)
+
+    appear.onComplete.add () ->
+      @game.time.events.add Phaser.Timer.SECOND * 2, () ->
+        disappear = @game.add.tween(@game.text).to( { alpha: 0.1 }, 200, "Linear", true)
+        disappear.onComplete.add () ->
+          @started = true
+          @game.text.setText('' + @counter)
+          @game.text.alpha = 1
+          @startState()
+        , this
+      , this
+    , this
+
+  startState: () ->
+    @updateMarker()
+    @game.time.events.loop(Phaser.Timer.SECOND, () ->
+      @counterCallback()
+    , this)
 
     @game.input.keyboard.addCallbacks(this, null, null, @rotate)
 
@@ -81,7 +98,7 @@ class Repair
     @marker.alpha = 0.4
 
   update : ->
-    if !@turnEnded
+    if @started and !@turnEnded
       p = @game.XYWorldToTiledWorld(@game.input, @game.layer1)
       @marker.x = p.x + 10
       @marker.y = p.y + 10
@@ -89,34 +106,34 @@ class Repair
 
 
   inputCallback: ()->
-    if @game.input.activePointer.leftButton.isDown
-      if @checkOverlap()
+    if @started
+      if @game.input.activePointer.leftButton.isDown
+        if @checkOverlap()
 
-        blockList = []
-        @marker.forEach (item) ->
-          p = new Phaser.Point()
-          @game.layer1.getTileXY(item.world.x, item.world.y, p)
-          blockList.push(p)
-        , this
+          blockList = []
+          @marker.forEach (item) ->
+            p = new Phaser.Point()
+            @game.layer1.getTileXY(item.world.x, item.world.y, p)
+            blockList.push(p)
+          , this
 
-        @game.buildTile(blockList, @game.currentPlayer)
+          @game.buildTile(blockList, @game.currentPlayer)
 
-        @game.drop.play()
+          @game.drop.play()
 
-        @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
+          @game.session.publish @game.prefix + 'build', [blockList, @game.currentPlayer]
 
-        if @game.checkTerritory(@game.currentPlayer)
-          @game.secured.play()
+          if @game.checkTerritory(@game.currentPlayer)
+            @game.secured.play()
 
-        @updateMarker()
-      else
-        @game.cantbuild.play()
+          @updateMarker()
+        else
+          @game.cantbuild.play()
 
-    if @game.input.activePointer.rightButton.isDown
-      @rotate()
+      if @game.input.activePointer.rightButton.isDown
+        @rotate()
 
   rotate: ()->
-    console.log()
     @marker.rotation += Math.PI / 2
 
   onBuild: (args)->
@@ -124,7 +141,6 @@ class Repair
     player = args[1]
     @game.buildTile(blockList, player)
     @game.checkTerritory(player)
-
 
   outOfBound: (x, y) ->
     return (@game.currentPlayer == 0 and x >= 380) or (@game.currentPlayer == 1 and x <= 420)

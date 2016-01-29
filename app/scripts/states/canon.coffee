@@ -2,22 +2,42 @@ class Canon
 
   create : ->
     @game.stage.disableVisibilityChange = true
-    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'canon'
-    @marker.alpha = 0.6
 
     @cantbuilds= []
-
-    @game.time.events.loop(Phaser.Timer.SECOND, () ->
-      @counterCallback()
-    , this)
 
     @turnEnded = false
     @otherEnded = false
 
     @counter = 5
-    @game.text.setText('' + @counter)
 
     @maxCanon = 1 + @game.countCastle(@game.currentPlayer)
+
+    @started = false
+    @game.text.alpha = 0.1
+    @game.text.setText('Place your cannons !')
+
+    appear = @game.add.tween(@game.text).to( { alpha: 1 }, 200, "Linear", true)
+
+    appear.onComplete.add () ->
+      @game.time.events.add Phaser.Timer.SECOND * 2, () ->
+        disappear = @game.add.tween(@game.text).to( { alpha: 0.1 }, 200, "Linear", true)
+        disappear.onComplete.add () ->
+          @started = true
+          @game.text.setText('' + @counter)
+          @game.text.alpha = 1
+          @startState()
+        , this
+      , this
+    , this
+
+
+  startState: ()->
+    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'canon'
+    @marker.alpha = 0.6
+
+    @game.time.events.loop(Phaser.Timer.SECOND, () ->
+      @counterCallback()
+    , this)
 
   counterCallback : () ->
     if !@turnEnded
@@ -42,14 +62,14 @@ class Canon
     @game.state.start 'fire', false
 
   cleanState: ()->
-    @game.text.setText('Prepare to battle...')
+    @game.text.setText('')
 
     for c in @cantbuilds
       c.destroy()
     @marker.destroy()
 
   update : ->
-    if !@turnEnded and @maxCanon > 0
+    if @started and !@turnEnded and @maxCanon > 0
       p = @correctedInput()
       @checkCanon(p.x, p.y, @game.currentPlayer)
       p = @game.XYWorldToTiledWorld(p, @game.layer1)
@@ -60,7 +80,7 @@ class Canon
     return new Phaser.Point(@game.input.x - 10, @game.input.y - 10)
 
   inputCallback: ()->
-    if !@turnEnded and @maxCanon > 0
+    if @started and !@turnEnded and @maxCanon > 0
       p = @correctedInput()
       if @checkCanon(p.x, p.y, @game.currentPlayer)
         @addCanon(p.x, p.y)

@@ -9,6 +9,7 @@ class Preload
     @game.load.image 'background','assets/backgrounds/back.jpg', 138, 15
     @game.load.image 'canon', 'assets/sprites/cannon0001.png'
     @game.load.image 'crosshair', 'assets/sprites/crosshair.png'
+    @game.load.image 'notready', 'assets/sprites/notready.png'
     @game.load.image 'house', 'assets/sprites/house.png'
     @game.load.image 'shot', 'assets/sprites/shot.png'
     @game.load.image 'tank', 'assets/sprites/tank1.png'

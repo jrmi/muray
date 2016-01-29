@@ -168,8 +168,6 @@ window.onload = ->
 
     game.myUid = game.genUid()
 
-    console.log(game.myUid)
-
     game.session = session
 
     game.prefix = wampPrefix + game.myUid + '.'

@@ -2,13 +2,9 @@ class Fire
 
   create : ->
     @game.stage.disableVisibilityChange = true
-    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'crosshair'
+    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'notready'
 
     @currentCanon = 0
-
-    @game.time.events.loop(Phaser.Timer.SECOND, () ->
-      @counterCallback()
-    , this)
 
     @myCanons = []
     for c in @game.canons
@@ -20,9 +16,36 @@ class Fire
     @otherEnded = false
 
     @fireing = 0
-
     @counter = 10
-    @game.text.setText('' + @counter)
+
+    @started = false
+    @game.text.alpha = 0.1
+    @game.text.setText('Prepare for battle !')
+
+    appear = @game.add.tween(@game.text).to( { alpha: 1 }, 200, "Linear", true)
+
+    appear.onComplete.add () ->
+      @game.time.events.add Phaser.Timer.SECOND * 2, () ->
+        disappear = @game.add.tween(@game.text).to( { alpha: 0.1 }, 200, "Linear", true)
+        disappear.onComplete.add () ->
+          @started = true
+          @game.text.setText('' + @counter)
+          @game.text.alpha = 1
+          @startState()
+        , this
+      , this
+    , this
+
+
+  startState: ()->
+    @marker.destroy()
+    @marker = @game.add.sprite @game.layer1.getTileX(@game.input.x), @game.layer1.getTileX(@game.input.y), 'crosshair'
+
+
+    @game.time.events.loop(Phaser.Timer.SECOND, () ->
+      @counterCallback()
+    , this)
+
 
   counterCallback : () ->
     if !@turnEnded
@@ -58,11 +81,12 @@ class Fire
     if !@turnEnded
       @marker.x = @game.input.x - 15
       @marker.y = @game.input.y - 15
-      for canon in @myCanons
-        canon.rotation = @game.physics.arcade.angleBetween(canon, @game.input) + Math.PI / 2
+
+    for canon in @myCanons
+      canon.rotation = @game.physics.arcade.angleBetween(canon, @game.input) + Math.PI / 2
 
   inputCallback: () ->
-    if @myCanons.length and @counter > 0
+    if @started and @myCanons.length and @counter > 0
       canon = @myCanons[@currentCanon]
       if not canon.busy
         canon.busy = true
